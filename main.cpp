@@ -49,11 +49,11 @@ int main(int argc, char *argv[])
 	    exit(EXIT_FAILURE);
 	}
 
-	/* Make sure the file '/usr/local/bin/gpio' exists */
+	/* Make sure the file '/usr/bin/gpio' exists */
 	struct stat filestat;
-	if (stat("/usr/local/bin/gpio", &filestat) == -1)
+	if (stat("/usr/bin/gpio", &filestat) == -1)
 	{
-	    syslog(LOG_ERR, "The program '/usr/local/bin/gpio' is missing, exiting");
+	    syslog(LOG_ERR, "The program '/usr/bin/gpio' is missing, exiting");
 	    exit(EXIT_FAILURE);
 	}
 
@@ -133,8 +133,9 @@ int main(int argc, char *argv[])
 
 	/* Setup pin mode and interrupt handler */
 	pinMode(PIN, INPUT);
-	pullUpDnControl(PIN, PUD_DOWN);
-	if (wiringPiISR(PIN, INT_EDGE_RISING, &Button_Pressed) == -1)
+	pullUpDnControl(PIN, PUD_UP); 
+	sleep(2);
+	if (wiringPiISR(PIN, INT_EDGE_FALLING, &Button_Pressed) == -1)
 	{
 	   syslog(LOG_ERR, "Unable to set interrupt handler for specified pin, exiting");
 	   exit(EXIT_FAILURE);
@@ -171,27 +172,27 @@ void Button_Pressed(void)
 	/* NOTE: Unfortunately, 'wiringPi' library doesn't support
 		unhooking an existing interrupt handler, so we need
 		to use 'gpio' binary to do this according to the author */
-	system("/usr/local/bin/gpio edge " PIN_STR " none");
+	system("/usr/bin/gpio edge " PIN_STR " none");
 
 	/* Just wait for user to press the button */
 	sleep(2);
 
 	switch (digitalRead(PIN))
 	{
-		case LOW:	// Shutdown requested
+		case HIGH:	// Shutdown requested
 		    syslog(LOG_INFO, "Shutting down system");
 
-		    if (execl("/sbin/poweroff", "poweroff", NULL) == -1)
+		    if (execl("/usr/bin/poweroff", "poweroff", NULL) == -1)
 			syslog(LOG_ERR, "'poweroff' program failed to run with error: %d", errno);
 
 		    // NOTE: Execution will not reach here if 'execl()' succeeds
 
 		    break;
 
-		case HIGH:	// Restart requested
+		case LOW:	// Restart requested
 		    syslog(LOG_INFO, "Restarting system");
 
-		    if (execl("/sbin/shutdown", "shutdown", "-r", "now", NULL) == -1)
+		    if (execl("/usr/bin/shutdown", "shutdown", "-r", "now", NULL) == -1)
 			syslog(LOG_ERR, "'shutdown' program failed to run with error: %d", errno);
 
 		    // NOTE: Execution will not reach here if 'execl()' succeeds

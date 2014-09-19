@@ -1,0 +1,13 @@
+[Unit]
+Description=buttonshutdown-daemon service
+
+[Service]
+User=root
+Group=root
+ExecStart=/usr/bin/buttonshutdown-daemon
+Type=forking
+PIDFile=/var/run/buttonshutdown-daemon.pid
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
