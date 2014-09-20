@@ -4,9 +4,9 @@ Description=buttonshutdownd-inv service
 [Service]
 User=root
 Group=root
-ExecStart=/usr/bin/buttonshutdownd-inv
+ExecStart=/usr/local/bin/buttonshutdownd-inv
 Type=forking
-PIDFile=/var/run/buttonshutdown-inv.pid
+PIDFile=/var/run/buttonshutdownd-inv.pid
 Restart=always
 
 [Install]

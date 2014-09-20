@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 	/* Ensure only one copy */
 	/*
 	Common user should be able to read the pid file so that they
-	need not use 'sudo' with 'service buttonshutdown-daemon status'
+	need not use 'sudo' with 'service buttonshutdownd-inv status'
 	to read daemon status. The correct PID file permission should be:
 		1. Read & Write permission for owner
 		2. Read permission for group and others
