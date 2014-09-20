@@ -22,7 +22,7 @@ License: Freeware
 #include <wiringPi.h>
 
 
-#define DAEMON_NAME		"buttonshutdown-daemon"
+#define DAEMON_NAME		"buttonshutdownd-inv"
 #define PID_FILE		"/var/run/" DAEMON_NAME ".pid"
 #define PIN			0	/* This is wiringPi pin 0 which is physical pin 8 */
 #define PIN_STR			"0"
@@ -179,7 +179,7 @@ void Button_Pressed(void)
 
 	switch (digitalRead(PIN))
 	{
-		case HIGH:	// Shutdown requested
+		case LOW:	// Shutdown requested
 		    syslog(LOG_INFO, "Shutting down system");
 
 		    if (execl("/usr/bin/poweroff", "poweroff", NULL) == -1)
@@ -189,7 +189,7 @@ void Button_Pressed(void)
 
 		    break;
 
-		case LOW:	// Restart requested
+		case HIGH:	// Restart requested
 		    syslog(LOG_INFO, "Restarting system");
 
 		    if (execl("/usr/bin/shutdown", "shutdown", "-r", "now", NULL) == -1)

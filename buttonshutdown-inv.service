@@ -1,12 +1,12 @@
 [Unit]
-Description=buttonshutdown-inv service
+Description=buttonshutdownd-inv service
 
 [Service]
 User=root
 Group=root
-ExecStart=/usr/bin/buttonshutdown-daemon
+ExecStart=/usr/bin/buttonshutdownd-inv
 Type=forking
-PIDFile=/var/run/buttonshutdown-daemon.pid
+PIDFile=/var/run/buttonshutdown-inv.pid
 Restart=always
 
 [Install]
