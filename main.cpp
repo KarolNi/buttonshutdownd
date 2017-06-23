@@ -1,9 +1,11 @@
 /*
-buttonshutdown-daemon - When the push button connected to wiringPi GPIO pin 0 is pushed
+buttonshutdownd - When the push button connected to wiringPi GPIO pin 0 is pushed
 	and released this daemon initiates a system shutdown. If the button is held down
 	for 2 secs or longer, a restart is initiated.
 
 Written By: Sanjeev Sharma (http://sanje2v.wordpress.com/)
+Modified by SRChiP.
+Modified by KarolNi.
 License: Freeware
 */
 
@@ -22,7 +24,7 @@ License: Freeware
 #include <wiringPi.h>
 
 
-#define DAEMON_NAME		"buttonshutdownd-inv"
+#define DAEMON_NAME		"buttonshutdownd"
 #define PID_FILE		"/var/run/" DAEMON_NAME ".pid"
 #define PIN			0	/* This is wiringPi pin 0 which is physical pin 8 */
 #define PIN_STR			"0"
@@ -49,18 +51,18 @@ int main(int argc, char *argv[])
 	    exit(EXIT_FAILURE);
 	}
 
-	/* Make sure the file '/usr/bin/gpio' exists */
+	/* Make sure the file '/usr/local/bin/gpio' exists */
 	struct stat filestat;
-	if (stat("/usr/bin/gpio", &filestat) == -1)
+	if (stat("/usr/local/bin/gpio", &filestat) == -1)
 	{
-	    syslog(LOG_ERR, "The program '/usr/bin/gpio' is missing, exiting");
+	    syslog(LOG_ERR, "The program '/usr/local/bin/gpio' is missing, exiting");
 	    exit(EXIT_FAILURE);
 	}
 
 	/* Ensure only one copy */
 	/*
 	Common user should be able to read the pid file so that they
-	need not use 'sudo' with 'service buttonshutdownd-inv status'
+	need not use 'sudo' with 'service buttonshutdownd status'
 	to read daemon status. The correct PID file permission should be:
 		1. Read & Write permission for owner
 		2. Read permission for group and others
@@ -172,7 +174,7 @@ void Button_Pressed(void)
 	/* NOTE: Unfortunately, 'wiringPi' library doesn't support
 		unhooking an existing interrupt handler, so we need
 		to use 'gpio' binary to do this according to the author */
-	system("/usr/bin/gpio edge " PIN_STR " none");
+	system("/usr/local/bin/gpio edge " PIN_STR " none");
 
 	/* Just wait for user to press the button */
 	sleep(2);
@@ -182,7 +184,7 @@ void Button_Pressed(void)
 		case LOW:	// Shutdown requested
 		    syslog(LOG_INFO, "Shutting down system");
 
-		    if (execl("/usr/bin/poweroff", "poweroff", NULL) == -1)
+		    if (execl("/sbin/poweroff", "poweroff", NULL) == -1)
 			syslog(LOG_ERR, "'poweroff' program failed to run with error: %d", errno);
 
 		    // NOTE: Execution will not reach here if 'execl()' succeeds
@@ -192,7 +194,7 @@ void Button_Pressed(void)
 		case HIGH:	// Restart requested
 		    syslog(LOG_INFO, "Restarting system");
 
-		    if (execl("/usr/bin/shutdown", "shutdown", "-r", "now", NULL) == -1)
+		    if (execl("/sbin/shutdown", "shutdown", "-r", "now", NULL) == -1)
 			syslog(LOG_ERR, "'shutdown' program failed to run with error: %d", errno);
 
 		    // NOTE: Execution will not reach here if 'execl()' succeeds

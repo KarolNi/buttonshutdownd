@@ -1,4 +1,4 @@
 #!/bin/bash
-g++ -I/usr/local/include -L/usr/local/lib -lwiringPi -o"buttonshutdownd-inv" main.cpp
-sudo mv buttonshutdownd-inv /usr/local/bin
-sudo mv buttonshutdownd-inv.service /etc/systemd/system/
+g++ -I/usr/local/include -L/usr/local/lib -lwiringPi -o"buttonshutdownd" main.cpp
+sudo mv buttonshutdownd /usr/local/bin
+sudo mv buttonshutdownd.service /etc/systemd/system/
