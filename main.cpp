@@ -181,7 +181,7 @@ void Button_Pressed(void)
 
 	switch (digitalRead(PIN))
 	{
-		case LOW:	// Shutdown requested
+		case HIGH:	// Shutdown requested
 		    syslog(LOG_INFO, "Shutting down system");
 
 		    if (execl("/sbin/poweroff", "poweroff", NULL) == -1)
@@ -191,7 +191,7 @@ void Button_Pressed(void)
 
 		    break;
 
-		case HIGH:	// Restart requested
+		case LOW:	// Restart requested
 		    syslog(LOG_INFO, "Restarting system");
 
 		    if (execl("/sbin/shutdown", "shutdown", "-r", "now", NULL) == -1)
