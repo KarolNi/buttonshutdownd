@@ -51,11 +51,11 @@ int main(int argc, char *argv[])
 	    exit(EXIT_FAILURE);
 	}
 
-	/* Make sure the file '/usr/local/bin/gpio' exists */
+	/* Make sure the file '/usr/bin/gpio' exists */
 	struct stat filestat;
-	if (stat("/usr/local/bin/gpio", &filestat) == -1)
+	if (stat("/usr/bin/gpio", &filestat) == -1)
 	{
-	    syslog(LOG_ERR, "The program '/usr/local/bin/gpio' is missing, exiting");
+	    syslog(LOG_ERR, "The program '/usr/bin/gpio' is missing, exiting");
 	    exit(EXIT_FAILURE);
 	}
 
@@ -174,7 +174,7 @@ void Button_Pressed(void)
 	/* NOTE: Unfortunately, 'wiringPi' library doesn't support
 		unhooking an existing interrupt handler, so we need
 		to use 'gpio' binary to do this according to the author */
-	system("/usr/local/bin/gpio edge " PIN_STR " none");
+	system("/usr/bin/gpio edge " PIN_STR " none");
 
 	/* Just wait for user to press the button */
 	sleep(2);
